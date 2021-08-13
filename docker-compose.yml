@@ -1,0 +1,38 @@
+version: '3'
+services:
+  python3:
+    restart: always
+    build: .
+    container_name: 'textualize'
+    working_dir: '/root/'
+    tty: true
+    volumes:
+      - ./src:/root/src
+
+  streamlit:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: streamlit
+    working_dir: '/src'
+    tty: true
+    volumes:
+      - ./src:/src
+    ports:
+      - '8501:8501'
+    command: streamlit run app.py
+
+  # jupyterlab:
+  #     restart: always
+  #     build:
+  #       context: .
+  #       dockerfile: Dockerfile
+  #     container_name: jupyterlab
+  #     working_dir: '/src'
+  #     tty: true
+  #     volumes:
+  #       - ./src:/src
+  #     ports: 
+  #       - '8080:8080'
+  #     command: jupyter-lab --ip 0.0.0.0 --port=8080 --allow-root --no-browser --NotebookApp.token=''

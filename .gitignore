@@ -1,0 +1,17 @@
+# vscode
+.vscode/
+
+# __pycache__/
+__pycache__/
+
+# config
+src/config/*
+
+# resources
+src/resources/*
+
+# ipynb
+src/.ipynb_checkpoints/*
+
+# Mac 
+.DS_Store
