@@ -58,10 +58,10 @@ def main():
     
     # 検索文字列の前後5単語を抽出する
     def extract_words(matched_words) -> list[list[Word]]:
-        lamps = []
+        lumps = []
         for word in matched_words:
-            lamps.append(generate_word_list()[word.index-5:word.index+6])
-        return lamps
+            lumps.append(generate_word_list()[word.index-5:word.index+6])
+        return lumps
 
 
     # Streamlitへの書き出し
@@ -131,10 +131,10 @@ def main():
                     st.form_submit_button(label="Search")
 
             matched_words = search(input_words)
-            res = extract_words(matched_words)
-            for r in res:
-                for w in r:
-                    st.write(w.name)
+            lumps = extract_words(matched_words)
+            for lump in lumps:
+                for word in lump:
+                    st.write(word.name)
                     
                     
 if __name__ == "__main__":
