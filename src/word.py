@@ -1,7 +1,7 @@
 class Word():
     index: int
-    meaning: str
+    name: str
     
-    def __init__(self, index, meaning):
+    def __init__(self, index, name):
         self.index = index
-        self.meaning = meaning
+        self.name = name

@@ -13,7 +13,7 @@ def main():
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'config/secret.json'
 
     # ファイルを読み込んでテキスト化する
-    def transcribe(content, lang = 'English') -> str:
+    def transcribe_file(content, lang = 'English') -> str:
 
         lang_code = {
             'English': 'en-US',
@@ -32,25 +32,36 @@ def main():
 
         for result in response.results:
             return result.alternatives[0].transcript
-
-
-    # 入力値で検索をする
-    def search(input_words) -> [Word]:
+        
+    
+    # 音声認識したテキストから単語リストを生成
+    def generate_word_list() -> [str]:
         text = st.session_state.result
 
         words = []
         for index, word in enumerate(text.split(' ')):
-            words.append(Word(index = index, meaning = word))
-#             words.append((index, word))
+            words.append(Word(index = index, name = word))
+        return words
 
+
+    # 入力値をもとに単語を検索をする
+    def search(input_words: [str]) -> [Word]:
+        words = generate_word_list()
+        
         result = []
         for target in input_words:
             for w in words:
-                if(w.meaning == target):
+                if(w.name == target):
                     result.append(w)
-
         return result
-    #     return map(lambda str: str.upper(), words)
+    
+    
+    # 検索文字列の前後5単語を抽出する
+    def extract_words(matched_words) -> [[Word]]:
+        lamps = []
+        for word in matched_words:
+            lamps.append(generate_word_list()[word.index-5:word.index+6])
+        return lamps
 
 
     # Streamlitへの書き出し
@@ -94,7 +105,8 @@ def main():
         if st.button('開始'):
             comment = st.empty()
             comment.write('Analyzing..')
-            st.session_state.result = transcribe(content, lang = option)
+#             st.session_state.result = transcribe_file(content, lang = option)
+            st.session_state.result = "Erin how can I help you today I see you signed up for a course online and I just cannot access that I've been trying the last 4 hours download display doesn't do anything"
             comment.write('')
         if st.session_state.result is not None:
             st.write(st.session_state.result)
@@ -108,21 +120,22 @@ def main():
                 col1, col2, col3 = st.columns([2,2,2])
 
                 with col1:
-                    word1 = st.text_input(label = 'word_1', key = 'word_1')
+                    word1 = st.text_input(label = '1', key = 'word_1')
                     input_words.append(word1)
                 with col2:
-                    word2 = st.text_input(label = 'word_2', key = 'word_2')
+                    word2 = st.text_input(label = '2', key = 'word_2')
                     input_words.append(word2)        
                 with col3:
-                    word3 = st.text_input(label = 'word_3', key = 'word_3')
+                    word3 = st.text_input(label = '3', key = 'word_3')
                     input_words.append(word3)        
                     st.form_submit_button(label="Search")
 
-#                 res = search(input_words)
-#                 st.write(res)
-
-                for word in search(input_words):
-                    st.write(word.meaning)
-    
+            matched_words = search(input_words)
+            res = extract_words(matched_words)
+            for r in res:
+                for w in r:
+                    st.write(w.name)
+                    
+                    
 if __name__ == "__main__":
     main()
