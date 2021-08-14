@@ -1,12 +1,11 @@
-
 import os
 from google.cloud import speech
 import io
 
 import streamlit as st
+import pandas as pd
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'config/secret.json'
-
 
 # ファイルを読み込んでテキスト化する
 def transcribe(content, lang = 'English') -> str:
@@ -27,17 +26,38 @@ def transcribe(content, lang = 'English') -> str:
     response = client.recognize(config = config, audio = audio)
 
     for result in response.results:
-        st.write(result.alternatives[0].transcript)
+        return result.alternatives[0].transcript
+        
+        
+# 入力値で検索をする
+def search(words) -> [str]:
+    return map(lambda str: str.upper(), words)
 
 
-
-# streamlitへの書き出し
+# Streamlitへの書き出し
 st.title('文字起こしアプリ')
 st.header('Overview')
 st.write('This is a transcription application that uses Google Cloud Speech-to-Text. The link is below.')
 st.markdown('<a href="https://cloud.google.com/speech-to-text?hl-ja">Cloud Speech-to-Text</a>', unsafe_allow_html=True)
 
+t = "TEST"
+st.markdown('``` {} ```'.format(t))
+
+# APIコール結果をセッションで保持する
+if 'result' not in st.session_state:
+    st.session_state['result'] = None
+
+
+# ファイルアップロード
 upload_file = st.file_uploader('Upload File', type=['mp3', 'wav'])
+
+# ファイル切り替える際にセッションを破棄する
+if upload_file is None:
+    st.session_state.result = None
+    st.session_state.word_1 = ''
+    st.session_state.word_2 = ''
+    st.session_state.word_3 = ''
+
 if upload_file is not None:
     content = upload_file.read()
     st.subheader('File Details')
@@ -48,11 +68,34 @@ if upload_file is not None:
     
     st.subheader('Chose Language')
     option = st.selectbox('Select a language for translation', ('English', 'Japanese'))
-    st.write('Language selected: ', option)
     
     st.write('文字起こし')
     if st.button('開始'):
         comment = st.empty()
-        comment.write('変換中です')
-        transcribe(content, lang = option)
-        comment.write('完了しました')
+        comment.write('Analyzing..')
+        st.session_state.result = transcribe(content, lang = option)
+        comment.write('')
+    if st.session_state.result is not None:
+        st.write(st.session_state.result)
+        
+    if st.session_state.result:
+        # 複数検索フォーム入力
+        st.title('Multi Forms')
+        words = []
+        with st.form(key='search'):
+            st.caption('Type words for searching') 
+            col1, col2, col3 = st.columns([2,2,2])
+
+            with col1:
+                word1 = st.text_input(label = 'word_1', key = 'word_1')
+                words.append(word1)
+            with col2:
+                word2 = st.text_input(label = 'word_2', key = 'word_2')
+                words.append(word2)        
+            with col3:
+                word3 = st.text_input(label = 'word_3', key = 'word_3')
+                words.append(word3)        
+                st.form_submit_button(label="Search")
+
+        for w in search(words):
+            st.write(w)
