@@ -35,7 +35,7 @@ def main():
         
     
     # 音声認識したテキストから単語リストを生成
-    def generate_word_list() -> [str]:
+    def generate_word_list() -> list[str]:
         text = st.session_state.result
 
         words = []
@@ -45,7 +45,7 @@ def main():
 
 
     # 入力値をもとに単語を検索をする
-    def search(input_words: [str]) -> [Word]:
+    def search(input_words: list[str]) -> list[Word]:
         words = generate_word_list()
         
         result = []
@@ -57,7 +57,7 @@ def main():
     
     
     # 検索文字列の前後5単語を抽出する
-    def extract_words(matched_words) -> [[Word]]:
+    def extract_words(matched_words) -> list[list[Word]]:
         lamps = []
         for word in matched_words:
             lamps.append(generate_word_list()[word.index-5:word.index+6])
