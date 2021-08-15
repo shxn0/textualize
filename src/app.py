@@ -53,15 +53,20 @@ def main():
     # 入力された検索文字列毎に前後5単語を抽出して二次元配列を作成
     def extract_words(matched_words) -> list[list[Word]]:
         lumps = []
+        word_list = generate_word_list()
+
         for word in matched_words:
-            lumps.append(generate_word_list()[word.index-5:word.index+6])
+            if len(word_list) < 11:
+                lumps.append(word_list)
+            elif word.index < 5:
+                lumps.append(word_list[:word.index+6])
+            else: lumps.append(word_list[word.index-5:word.index+6])
         return lumps
     
     
     def create_table(lumps):
         df = pd.DataFrame(data = map(lambda l: map(lambda w: w.name, l), lumps))
-        df_with_style = df.style.apply(highlight_col, axis=None)
-        st.table(df_with_style)
+        st.table(df)
 
 
     # 検索文字列をハイライト
@@ -137,13 +142,12 @@ def main():
                     input_words.append(word3)        
                     st.form_submit_button(label = "Search")
 
-            # 表示はメソッドに切り出せそう
             matched_words = search(input_words)
             lumps = extract_words(matched_words)
             
             if len(lumps) is not 0:
                 create_table(lumps)
-                            
+
                     
 if __name__ == "__main__":
     main()
