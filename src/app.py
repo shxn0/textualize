@@ -1,20 +1,16 @@
 import os
 from google.cloud import speech
 import io
-
 import streamlit as st
 import pandas as pd
-
 from word import Word
 
 
 def main():
-
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'config/secret.json'
 
     # ファイルを読み込んでテキスト化する
     def transcribe_file(content, lang = 'English') -> str:
-
         lang_code = {
             'English': 'en-US',
             'Japanese': 'ja-JP'
@@ -22,12 +18,10 @@ def main():
 
         client = speech.SpeechClient()
         audio = speech.RecognitionAudio(content = content)
-
         config = speech.RecognitionConfig(
             encoding = speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED,
             language_code = lang_code[lang],
         )
-
         response = client.recognize(config = config, audio = audio)
 
         for result in response.results:
@@ -62,12 +56,22 @@ def main():
         for word in matched_words:
             lumps.append(generate_word_list()[word.index-5:word.index+6])
         return lumps
-
     
-#     # 単語オブジェクトを位置で昇順ソート
-#     def sorted_by_index(words) -> list[Word]:
-#         return sorted(words, key = lambda w: w.index)
-        
+    
+    def create_table(lumps):
+        df = pd.DataFrame(data = map(lambda l: map(lambda w: w.name, l), lumps))
+        df_with_style = df.style.apply(highlight_col, axis=None)
+        st.table(df_with_style)
+
+
+    # 検索文字列をハイライト
+    def highlight_col(df):
+        copied_df = df.copy()
+        copied_df.loc[:,:] = None
+        copied_df[[5]] = 'background-color: #F7A8D4'
+        return copied_df
+
+
 
     # Streamlitへの書き出し
     st.title('文字起こしアプリ')
@@ -75,11 +79,9 @@ def main():
     st.write('This is a transcription application that uses Google Cloud Speech-to-Text. The link is below.')
     st.markdown('<a href="https://cloud.google.com/speech-to-text?hl-ja">Cloud Speech-to-Text</a>', unsafe_allow_html = True)
 
-
     # APIコール結果をセッションで保持する
     if 'result' not in st.session_state:
         st.session_state['result'] = None
-
 
     # ファイルアップロード
     upload_file = st.file_uploader('Upload File', type = ['mp3', 'wav'])
@@ -140,9 +142,8 @@ def main():
             lumps = extract_words(matched_words)
             
             if len(lumps) is not 0:
-                df = pd.DataFrame(data = map(lambda l: map(lambda w: w.name, l), lumps))
-                st.table(df)
-            
+                create_table(lumps)
+                            
                     
 if __name__ == "__main__":
     main()
