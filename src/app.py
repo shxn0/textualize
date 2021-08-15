@@ -24,7 +24,7 @@ def main():
         audio = speech.RecognitionAudio(content = content)
 
         config = speech.RecognitionConfig(
-            encoding=speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED,
+            encoding = speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED,
             language_code = lang_code[lang],
         )
 
@@ -56,19 +56,24 @@ def main():
         return result
     
     
-    # 検索文字列の前後5単語を抽出する
+    # 入力された検索文字列毎に前後5単語を抽出して二次元配列を作成
     def extract_words(matched_words) -> list[list[Word]]:
         lumps = []
         for word in matched_words:
             lumps.append(generate_word_list()[word.index-5:word.index+6])
         return lumps
 
+    
+#     # 単語オブジェクトを位置で昇順ソート
+#     def sorted_by_index(words) -> list[Word]:
+#         return sorted(words, key = lambda w: w.index)
+        
 
     # Streamlitへの書き出し
     st.title('文字起こしアプリ')
     st.header('Overview')
     st.write('This is a transcription application that uses Google Cloud Speech-to-Text. The link is below.')
-    st.markdown('<a href="https://cloud.google.com/speech-to-text?hl-ja">Cloud Speech-to-Text</a>', unsafe_allow_html=True)
+    st.markdown('<a href="https://cloud.google.com/speech-to-text?hl-ja">Cloud Speech-to-Text</a>', unsafe_allow_html = True)
 
 
     # APIコール結果をセッションで保持する
@@ -77,7 +82,7 @@ def main():
 
 
     # ファイルアップロード
-    upload_file = st.file_uploader('Upload File', type=['mp3', 'wav'])
+    upload_file = st.file_uploader('Upload File', type = ['mp3', 'wav'])
 
     # ファイル切り替える際にセッションを破棄する
     if upload_file is None:
@@ -115,7 +120,7 @@ def main():
             # 複数検索フォーム入力
             st.title('Multi Forms')
             input_words = []
-            with st.form(key='search'):
+            with st.form(key = 'search'):
                 st.caption('Type words for searching') 
                 col1, col2, col3 = st.columns([2,2,2])
 
@@ -128,14 +133,16 @@ def main():
                 with col3:
                     word3 = st.text_input(label = '3', key = 'word_3')
                     input_words.append(word3)        
-                    st.form_submit_button(label="Search")
+                    st.form_submit_button(label = "Search")
 
+            # 表示はメソッドに切り出せそう
             matched_words = search(input_words)
             lumps = extract_words(matched_words)
-            for lump in lumps:
-                for word in lump:
-                    st.write(word.name)
-                    
+            
+            if len(lumps) is not 0:
+                df = pd.DataFrame(data = map(lambda l: map(lambda w: w.name, l), lumps))
+                st.table(df)
+            
                     
 if __name__ == "__main__":
     main()
