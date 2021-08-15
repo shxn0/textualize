@@ -4,23 +4,22 @@ import io
 import streamlit as st
 import pandas as pd
 from word import Word
+from janome.tokenizer import Tokenizer
+
+from language import Language
 
 
 def main():
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'config/secret.json'
 
     # ファイルを読み込んでテキスト化する
-    def transcribe_file(content, lang = 'English') -> str:
-        lang_code = {
-            'English': 'en-US',
-            'Japanese': 'ja-JP'
-        }
+    def transcribe_file(content, lang = Language.ENG.value[1]) -> str:
 
         client = speech.SpeechClient()
         audio = speech.RecognitionAudio(content = content)
         config = speech.RecognitionConfig(
             encoding = speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED,
-            language_code = lang_code[lang],
+            language_code = lang,
         )
         response = client.recognize(config = config, audio = audio)
 
@@ -77,6 +76,11 @@ def main():
         return copied_df
 
 
+    # 形態素解析で日本語を分割
+    def morphological_analyze(text) -> list[str]:
+        t = Tokenizer()
+        return t.tokenize(text, wakati=True)
+
 
     # Streamlitへの書き出し
     st.title('文字起こしアプリ')
@@ -84,9 +88,20 @@ def main():
     st.write('This is a transcription application that uses Google Cloud Speech-to-Text. The link is below.')
     st.markdown('<a href="https://cloud.google.com/speech-to-text?hl-ja">Cloud Speech-to-Text</a>', unsafe_allow_html = True)
 
+
+    # text = '太郎さんは山田家の長男です'
+    # t = Tokenizer()
+    # res = t.tokenize(text, wakati=True)
+    # for r in res:
+    #     st.write(r)
+
+
     # APIコール結果をセッションで保持する
     if 'result' not in st.session_state:
         st.session_state['result'] = None
+
+    if 'lang' not in st.session_state:
+        st.session_state['lang'] = 'Eng'
 
     # ファイルアップロード
     upload_file = st.file_uploader('Upload File', type = ['mp3', 'wav'])
@@ -97,6 +112,7 @@ def main():
         st.session_state.word_1 = ''
         st.session_state.word_2 = ''
         st.session_state.word_3 = ''
+        st.session_state.lang = None
 
     if upload_file is not None:
         content = upload_file.read()
@@ -111,14 +127,15 @@ def main():
         st.audio(content)
 
         st.subheader('Chose Language')
-        option = st.selectbox('Select a language for translation', ('English', 'Japanese'))
+        option = st.selectbox('Select a language for translation', (Language.ENG.value[0], Language.JP.value[0]))
 
         st.write('文字起こし')
         if st.button('開始'):
             comment = st.empty()
             comment.write('Analyzing..')
-#             st.session_state.result = transcribe_file(content, lang = option)
-            st.session_state.result = "Erin how can I help you today I see you signed up for a course online and I just cannot access that I've been trying the last 4 hours download display doesn't do anything"
+            st.session_state.result = transcribe_file(content, lang = Language.get_code(option))
+            # st.session_state.result = "Erin how can I help you today I see you signed up for a course online and I just cannot access that I've been trying the last 4 hours download display doesn't do anything"
+            # st.session_state.result = 'ご住所の変更でございますねご連絡ありがとうございます恐れ入りますがご契約内容を確認いたしますのでお電話を頂いてる方は契約者ご本人様でいらっしゃいますかはいそうです本人ですそれではお電話をいただいておりますお客様のお名前をお願い致します山田太郎です'
             comment.write('')
         if st.session_state.result is not None:
             st.write(st.session_state.result)
