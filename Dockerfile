@@ -16,5 +16,7 @@ RUN pip install --upgrade setuptools
 
 RUN pip install --upgrade google-cloud-speech
 RUN pip install streamlit
+RUN pip install janome
 
 RUN python -m pip install jupyterlab
+
