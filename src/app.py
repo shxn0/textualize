@@ -28,18 +28,25 @@ def main():
         
     
     # 音声認識したテキストから単語リストを生成
-    def generate_word_list() -> list[str]:
+    def generate_word_list(lang) -> list[str]:
         text = st.session_state.result
 
+        if lang == Language.JP.value[0]:
+            text = morphological_analyze(text)
+        elif lang == Language.ENG.value[0]:
+            text = text.split(' ')
+        else:
+            pass
+
         words = []
-        for index, word in enumerate(text.split(' ')):
+        for index, word in enumerate(text):
             words.append(Word(index = index, name = word))
         return words
 
 
     # 入力値をもとに単語を検索をする
     def search(input_words: list[str]) -> list[Word]:
-        words = generate_word_list()
+        words = generate_word_list(st.session_state.lang)
         
         result = []
         for target in input_words:
@@ -52,7 +59,7 @@ def main():
     # 入力された検索文字列毎に前後5単語を抽出して二次元配列を作成
     def extract_words(matched_words) -> list[list[Word]]:
         lumps = []
-        word_list = generate_word_list()
+        word_list = generate_word_list(st.session_state.lang)
 
         for word in matched_words:
             if len(word_list) < 11:
@@ -89,19 +96,13 @@ def main():
     st.markdown('<a href="https://cloud.google.com/speech-to-text?hl-ja">Cloud Speech-to-Text</a>', unsafe_allow_html = True)
 
 
-    # text = '太郎さんは山田家の長男です'
-    # t = Tokenizer()
-    # res = t.tokenize(text, wakati=True)
-    # for r in res:
-    #     st.write(r)
-
-
     # APIコール結果をセッションで保持する
     if 'result' not in st.session_state:
         st.session_state['result'] = None
 
+    # 選択言語をセッションで保持する
     if 'lang' not in st.session_state:
-        st.session_state['lang'] = 'Eng'
+        st.session_state['lang'] = None
 
     # ファイルアップロード
     upload_file = st.file_uploader('Upload File', type = ['mp3', 'wav'])
@@ -128,6 +129,7 @@ def main():
 
         st.subheader('Chose Language')
         option = st.selectbox('Select a language for translation', (Language.ENG.value[0], Language.JP.value[0]))
+        st.session_state.lang = option
 
         st.write('文字起こし')
         if st.button('開始'):
