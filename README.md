@@ -32,7 +32,7 @@ Textualize
   ┗ README.md
 ```
 
-## How to Set-up
+## How to set-up
 ### Summary
 you can skip these 1 ~ 3 process this time.
 1. Login to GCP and create IAM user for this project. 
@@ -85,7 +85,7 @@ If this screen shows up, you are success to run web app.
 ![top-page](https://user-images.githubusercontent.com/30136112/129522482-9f384435-d116-49e2-8768-d616e1415b17.png)
 
 
-### How to Use
+### How to use
 1. You can find sample audio files are under `resources` directory.
 2. Upload audio file. you can upload only mp3/wav file type and is within 200MB.
 3. Press `Start` to transcribe audio to text.
@@ -97,7 +97,7 @@ ex.
 ![search-function](https://user-images.githubusercontent.com/30136112/129526363-3bef1fcb-eaf8-477e-a399-60891f4ecce2.png)
 
 
-## How to edit code
+## How to edit codes
 1. run a command as below
 ```
 docker run -v $PWD/src:/root/src -w /root/src -it --rm -p 7777:8888 textualize_python3 jupyter-lab --ip 0.0.0.0 --allow-root -b localhost
