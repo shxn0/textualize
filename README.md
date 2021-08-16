@@ -86,13 +86,14 @@ If this screen shows up, you are success to run web app.
 
 
 ### How to Use
-1. you can find sample audio files are under `resources` directory.
-2. upload audio file. you can upload only mp3/wav file type and is within 200MB.
-3. press `Start` to transcribe audio to text.
-4. you can search three words in transcribed text.
-5. you can see 5 words before and after the searched word in a table.
+1. You can find sample audio files are under `resources` directory.
+2. Upload audio file. you can upload only mp3/wav file type and is within 200MB.
+3. Press `Start` to transcribe audio to text.
+4. You can search three words in transcribed text.
+5. You can see 5 words before and after the searched word in a table.
 
 ex.
+
 ![search-function](https://user-images.githubusercontent.com/30136112/129526363-3bef1fcb-eaf8-477e-a399-60891f4ecce2.png)
 
 
