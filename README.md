@@ -85,7 +85,7 @@ If this screen shows up, you are success to run web app.
 ![top-page](https://user-images.githubusercontent.com/30136112/129522482-9f384435-d116-49e2-8768-d616e1415b17.png)
 
 
-### How to use
+## How to use
 1. You can find sample audio files are under `resources` directory.
 2. Upload audio file. you can upload only mp3/wav file type and is within 200MB.
 3. Press `Start` to transcribe audio to text.
