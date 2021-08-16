@@ -97,4 +97,16 @@ ex.
 ![search-function](https://user-images.githubusercontent.com/30136112/129526363-3bef1fcb-eaf8-477e-a399-60891f4ecce2.png)
 
 
+## How to Edit code
+1. run a command as below
+```
+docker run -v $PWD/src:/root/src -w /root/src -it --rm -p 7777:8888 textualize_python3 jupyter-lab --ip 0.0.0.0 --allow-root -b localhost
+```
+
+2. copy token value after endpoint shows up on your console.
+![jupyter-url](https://user-images.githubusercontent.com/30136112/129534216-ccce7746-148b-40c6-a5cf-14d4a5f7bba5.png)
+
+
+3. access to `localhost:7777` to open jupyter-lab and paste the token.
+![jupyter-login](https://user-images.githubusercontent.com/30136112/129534356-8bc5b167-7915-4313-95fc-4013e2d2e3de.png)
 
