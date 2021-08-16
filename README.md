@@ -97,7 +97,7 @@ ex.
 ![search-function](https://user-images.githubusercontent.com/30136112/129526363-3bef1fcb-eaf8-477e-a399-60891f4ecce2.png)
 
 
-## How to Edit code
+## How to edit code
 1. run a command as below
 ```
 docker run -v $PWD/src:/root/src -w /root/src -it --rm -p 7777:8888 textualize_python3 jupyter-lab --ip 0.0.0.0 --allow-root -b localhost
