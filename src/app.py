@@ -72,6 +72,8 @@ def main():
     
     def create_table(lumps):
         df = pd.DataFrame(data = map(lambda l: map(lambda w: w.name, l), lumps))
+        df.index = df.index + 1
+        df.columns = df.columns + 1
         st.table(df)
 
 
@@ -90,7 +92,7 @@ def main():
 
 
     # Streamlitへの書き出し
-    st.title('文字起こしアプリ')
+    st.title('Transcription App')
     st.header('Overview')
     st.write('This is a transcription application that uses Google Cloud Speech-to-Text. The link is below.')
     st.markdown('<a href="https://cloud.google.com/speech-to-text?hl-ja">Cloud Speech-to-Text</a>', unsafe_allow_html = True)
@@ -131,8 +133,8 @@ def main():
         option = st.selectbox('Select a language for translation', (Language.ENG.value[0], Language.JP.value[0]))
         st.session_state.lang = option
 
-        st.write('文字起こし')
-        if st.button('開始'):
+        st.write('Transcription')
+        if st.button('Start'):
             comment = st.empty()
             comment.write('Analyzing..')
             st.session_state.result = transcribe_file(content, lang = Language.get_code(option))
@@ -144,7 +146,7 @@ def main():
 
         if st.session_state.result:
             # 複数検索フォーム入力
-            st.title('Multi Forms')
+            st.title('Search Words')
             input_words = []
             with st.form(key = 'search'):
                 st.caption('Type words for searching') 
@@ -165,6 +167,10 @@ def main():
             lumps = extract_words(matched_words)
             
             if len(lumps) is not 0:
+                st.subheader('Results')
+                for w in matched_words:
+                    st.write(f'Position={w.index + 1}, Word={w.name}')
+                st.subheader('Words around the search word')
                 create_table(lumps)
 
                     
