@@ -1,6 +1,6 @@
 # textualize
 Convert audio to text with Google speech-to-text Api.  
-you can only upload `mp3/wav` file type and is within 200MB, and it can transcribe audio files to only `English/Japanese`.
+you can only upload `mp3/wav` file type and is within `200MB`, and it can transcribe audio files to only `English/Japanese`.
 
 you can find sample audio files are under `resources` directory.
 
