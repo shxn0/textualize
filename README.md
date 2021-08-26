@@ -96,7 +96,7 @@ ex.
 
 ### English  
 ![search-function](https://user-images.githubusercontent.com/30136112/130976121-2557cfbb-045c-4c59-83fc-3252c3fc84fe.png)
-
+***
 ### Japanese  
 ![search-function-jp](https://user-images.githubusercontent.com/30136112/130977662-6d00f781-bb45-4fd2-a4c4-c3b60ba2a06c.png)
 
